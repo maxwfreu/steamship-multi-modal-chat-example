@@ -1,113 +1,103 @@
-import Image from 'next/image'
+'use client'
+ 
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { useChat } from 'ai/react';
+import { useEffect, useState } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
+import { BotIcon, SendIcon, UserIcon } from 'lucide-react';
 
-export default function Home() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+const useBlockUrl = (blockId: string) => {
+  const [url, setUrl] = useState<string | undefined>()
+  useEffect(() => {
+    const fetchImage = async () => {
+      const res = await fetch(`/api/steamship/${blockId}`)
+      const body = await res.blob()
+      setUrl(URL.createObjectURL(body))
+    }
+    if (!url) {
+    fetchImage()
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+    }
+  }, [blockId])
+  return url
+}
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+const SteamshipImage = ({blockId}: {blockId: string}) => {
+  const url = useBlockUrl(blockId)
+  if (!url) {
+    return <Skeleton className='w-44 h-44' />
+  }
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
+  return <img src={url} className='w-auto h-44' />
+};
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
+const SteamshipAudio = ({blockId, mimeType}: {blockId: string, mimeType: string}) => {
+  const url = useBlockUrl(blockId)
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+  if (!url) {
+    return <Skeleton className='w-44 h-2' />
+  }
+
+  return(
+    <audio controls>
+      <source src={url} type={mimeType} />
+    </audio>
   )
+};
+
+
+const SteamshipMessage = ({message}: {message: string}) => {
+  try {
+    const messageJson = JSON.parse(message) as {text: string, id?: string, fileId?: string, mimeType?: string} []
+    const audioMessage = messageJson.find(m => m.fileId && m.mimeType?.indexOf('audio') !== -1)
+    if (audioMessage && audioMessage.id && audioMessage.mimeType) {
+      return <SteamshipAudio blockId={audioMessage.id} mimeType={audioMessage.mimeType} />
+    }
+
+    return messageJson.map((m, i) => {
+      if (m.id && m.mimeType?.indexOf("image") !== -1) {
+        return <SteamshipImage key={i} blockId={m.id} />
+      }
+      let text = m.text
+      if (m.text.startsWith('. ')) {
+        text = m.text.slice(2)
+      }
+      return <span key={i} className="block">{text}</span>
+    })
+  } catch(e) {
+    return message
+  }
+}
+ 
+export default function SloganGenerator() {
+  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({ id: '123' })
+  return (
+    <div className="w-screen max-w-3xl mx-auto h-screen flex flex-col justify-between">
+      <div className=" px-4 py-2 flex-grow overflow-scroll flex flex-col-reverse">
+        <div>
+        {messages.map(m => (
+          <div key={m.id} className='border border-white/10 text-white px-2 py-4 rounded-md mb-4 flex gap-4'>
+            <div className="">{m.role === 'user' ? <UserIcon className='h-6 w-6' /> : <BotIcon className='h-6 w-6' />}</div>
+            <div className='space-y-2'>
+              <SteamshipMessage message={m.content} />
+            </div>
+          </div>
+        ))}
+        {isLoading && (
+          <div>
+            Assistant is responding...
+          </div>
+        )}
+        </div>
+
+      </div>
+      <form onSubmit={handleSubmit} className='flex gap-4 px-2 pt-2 pb-12'>
+          <label className='flex-grow'>
+            <Input placeholder='Say something...' value={input} onChange={handleInputChange} className="flex-grow" />
+          </label>
+          <Button type="submit"><SendIcon className='h-6 w-6' /></Button>
+        </form>
+    </div>
+  );
 }
