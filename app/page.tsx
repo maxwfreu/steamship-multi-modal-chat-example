@@ -16,10 +16,10 @@ const useBlockUrl = (blockId: string) => {
       setUrl(URL.createObjectURL(body))
     }
     if (!url) {
-    fetchImage()
-
+      fetchImage()
     }
-  }, [blockId])
+  }, [blockId, url])
+
   return url
 }
 
@@ -28,7 +28,6 @@ const SteamshipImage = ({blockId}: {blockId: string}) => {
   if (!url) {
     return <Skeleton className='w-44 h-44' />
   }
-
   return <img src={url} className='w-auto h-44' />
 };
 

@@ -1,11 +1,4 @@
-import { Configuration } from 'openai-edge';
-import { StreamingTextResponse } from 'ai';
- 
-// Set the runtime to edge for best performance
-export const runtime = 'edge';
- 
-// @ts-ignore
-export async function GET(req: Request, context: { params }) {
+export async function GET(req: Request, context: { params: any }) {
   const blockId = context.params.blockId;
   const steamshipResponse = await fetch(`https://api.steamship.com/api/v1/block/${blockId}/raw`, {
     headers: {
@@ -16,4 +9,3 @@ export async function GET(req: Request, context: { params }) {
   })
   return steamshipResponse
 }
-
