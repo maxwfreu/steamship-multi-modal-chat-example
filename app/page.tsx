@@ -16,9 +16,9 @@ const useBlockUrl = (blockId: string) => {
       setUrl(URL.createObjectURL(body))
     }
     if (!url) {
-      fetchImage()
+      fetchImage();
     }
-  }, [blockId, url])
+  }, [blockId])
 
   return url
 }
